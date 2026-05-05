@@ -4,6 +4,7 @@ export const createMenu = async (req, res) => {
     try {
         const { restaurant_id, name, description, price, category } = req.body;
         const newMenu = new menu({ restaurant_id, name, description, price, category });
+        await newMenu.save();
         res.status(201).json(newMenu);
     } catch (error) {
         res.status(500).json({ error: error.message });

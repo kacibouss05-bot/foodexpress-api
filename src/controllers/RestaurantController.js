@@ -6,7 +6,7 @@ export const createRestaurant = async (req, res) => {
 
         const { name, address, phone, opening_hours } = req.body;
         const newRestaurant = new restaurant({ name, address, phone, opening_hours });
-        
+        await newRestaurant.save();
         res.status(201).json(newRestaurant);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -40,7 +40,7 @@ export const getAllRestaurants = async (req, res) => {
     }
 };
 //Update
-export const UpdateRestaurant = async (req, res) => {
+export const updateRestaurant = async (req, res) => {
     try {
         const { name, address, phone, opening_hours } = req.body;
         const updatedRestaurant = await restaurant.findByIdAndUpdate(
