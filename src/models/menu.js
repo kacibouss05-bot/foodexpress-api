@@ -1,20 +1,19 @@
 import mongoose from 'mongoose';
+
 const MenuSchema = new mongoose.Schema({
-    id:{
-        type: Number,
-        required: true
-    },
-    restaurant_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Restaurant',
-        required: true
-    },
+  restaurant_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Restaurant',
+    required: true
+  },
   name: {
     type: String,
+    trim: true,
     required: true
   },
   description: {
     type: String,
+    trim: true,
     required: true
   },
   price: {
@@ -23,7 +22,13 @@ const MenuSchema = new mongoose.Schema({
   },
   category: {
     type: String,
+    trim: true,
     required: true
   }
+}, {
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
+
 export default mongoose.model('Menu', MenuSchema);

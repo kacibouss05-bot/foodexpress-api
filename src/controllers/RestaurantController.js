@@ -1,65 +1,104 @@
-import restaurant from "../models/restaurant";
+import mongoose from 'mongoose';
+import Restaurant from '../models/restaurant.js';
 
-//Create 
 export const createRestaurant = async (req, res) => {
-    try {
-
-        const { name, address, phone, opening_hours } = req.body;
-        const newRestaurant = new restaurant({ name, address, phone, opening_hours });
-        await newRestaurant.save();
-        res.status(201).json(newRestaurant);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+  try {
+    const newRestaurant = await Restaurant.create(req.body);
+    res.status(201).json(newRestaurant);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-//Get by filter
-export const getRestaurants = async (req, res) => {
-    try {
-        const filter = {};
-        if (req.query.name) {
-            filter.name = req.query.name;
-        }
-        if (req.query.address) {
-            filter.address = req.query.address;
-        }
-        const restaurants = await restaurant.find(filter);
-        res.status(200).json(restaurants);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-//Read
 export const getAllRestaurants = async (req, res) => {
-    try {
-        const restaurants = await restaurant.find();
-        res.status(200).json(restaurants);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+  try {
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
+    const skip = (page - 1) * limit;
+    const sort = ['name', 'address'].includes(req.query.sort) ? req.query.sort : 'name';
+    const order = req.query.order === 'desc' ? -1 : 1;
+    const filter = {};
+
+    if (req.query.name) {
+      filter.name = new RegExp(req.query.name, 'i');
     }
-};
-//Update
-export const updateRestaurant = async (req, res) => {
-    try {
-        const { name, address, phone, opening_hours } = req.body;
-        const updatedRestaurant = await restaurant.findByIdAndUpdate(
-            req.params.id,
-            { name, address, phone, opening_hours },
-            { new: true }
-        );
-        res.status(200).json(updatedRestaurant);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+
+    if (req.query.address) {
+      filter.address = new RegExp(req.query.address, 'i');
     }
-};
-//delete
-export const deleteRestaurant = async (req, res) => {
-    try {
-        const deletedRestaurant = await restaurant.findByIdAndDelete(req.params.id);
-        res.status(200).json(deletedRestaurant);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+
+    const [items, total] = await Promise.all([
+      Restaurant.find(filter).sort({ [sort]: order }).skip(skip).limit(limit),
+      Restaurant.countDocuments(filter),
+    ]);
+
+    res.status(200).json({
+      data: items,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
+export const getRestaurantById = async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid restaurant id' });
+    }
+
+    const restaurant = await Restaurant.findById(req.params.id);
+
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+
+    return res.status(200).json(restaurant);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateRestaurant = async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid restaurant id' });
+    }
+
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedRestaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+
+    return res.status(200).json(updatedRestaurant);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteRestaurant = async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid restaurant id' });
+    }
+
+    const deletedRestaurant = await Restaurant.findByIdAndDelete(req.params.id);
+
+    if (!deletedRestaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+
+    return res.status(200).json(deletedRestaurant);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
