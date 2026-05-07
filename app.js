@@ -1,3 +1,4 @@
+
 import express from 'express'
 import dotenv from 'dotenv'
 import usersRouter from './routes/users.js'
@@ -8,7 +9,9 @@ app.use(express.json());
 app.use('/users',usersRouter);
 const port = process.env.PORT || 3000;
 app.listen(port ,()=>{
-    console.log('le server lancer sur le port ${port}');
+    console.log(`le server lancé sur le port ${port}`);
 })
 
 export default app;
+
+

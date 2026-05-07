@@ -1,26 +1,22 @@
 import mongoose from 'mongoose';
 
-const MenuSchema = new mongoose.Schema({
-  restaurant_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Restaurant',
-    required: true
-  },
+const RestaurantSchema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
     required: true
   },
-  description: {
+  address: {
     type: String,
     trim: true,
     required: true
   },
-  price: {
-    type: Number,
+  phone: {
+    type: String,
+    trim: true,
     required: true
   },
-  category: {
+  opening_hours: {
     type: String,
     trim: true,
     required: true
@@ -31,4 +27,4 @@ const MenuSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-export default mongoose.model('Menu', MenuSchema);
+export default mongoose.model('Restaurant', RestaurantSchema);

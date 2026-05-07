@@ -1,12 +1,30 @@
 {
+  "name": "foodexpress-api",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/app.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "joi": "^18.2.1",
     "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.19.4",
+    "npm": "^11.14.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "test": "^3.3.0",
     "uuid": "^14.0.0"
   },
   "devDependencies": {
@@ -17,26 +35,7 @@
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2"
   },
-  "name": "foodexpress-api",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "directories": {
-    "test": "tests"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kacibouss05-bot/foodexpress-api.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/kacibouss05-bot/foodexpress-api/issues"
-  },
-  "homepage": "https://github.com/kacibouss05-bot/foodexpress-api#readme"
+  "jest": {
+    "testEnvironment": "node"
+  }
 }
